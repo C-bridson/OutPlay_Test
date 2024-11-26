@@ -10,7 +10,7 @@ public class Movement : MonoBehaviour
     private GameObject target_Flag;
 
     private int total_Targets = 0;
-    private int current_Target = 0;
+ 
     private int target_Reached = 0;
 
     private Manager manager;
@@ -18,6 +18,16 @@ public class Movement : MonoBehaviour
     private float movementSpeed = 5f;
 
     private Rigidbody rb;
+
+    private bool _canMove = true;
+
+
+    //to prevent the player continually moving even after reaching flags or hitting obstacles
+    public bool CanMove
+    {
+        get { return _canMove; }
+        set { _canMove = value; }
+    }
 
     void Start()
     {
@@ -30,9 +40,11 @@ public class Movement : MonoBehaviour
         total_Targets = manager.GetFlags().Count();
     }
 
+
+
     void FixedUpdate()
     {
-        if (target_Reached != total_Targets)
+        if (target_Reached != total_Targets && _canMove != false)
         {
             //move Character to current target flag
             Vector3 direction = (target_Flag.transform.position - this.gameObject.transform.position).normalized;
@@ -40,6 +52,7 @@ public class Movement : MonoBehaviour
         }
     }
 
+    
 
 
 
