@@ -9,9 +9,9 @@ public class Movement : MonoBehaviour
     [SerializeField]
     private GameObject target_Flag;
 
-    private int total_Targets = 0;
+    public int total_Targets = 0;
  
-    private int target_Reached = 0;
+    public int target_Reached = 0;
 
     private Manager manager;
 
@@ -52,6 +52,12 @@ public class Movement : MonoBehaviour
         }
     }
 
+    public void UpdateTarget()
+    {
+        manager.RemoveFlag(target_Flag); 
+        target_Flag = manager.GetFlags().First();
+
+    }
     
 
 

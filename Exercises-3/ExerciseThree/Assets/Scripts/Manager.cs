@@ -14,6 +14,9 @@ public class Manager : MonoBehaviour
         return flags;
     }
 
-
+    public void RemoveFlag(GameObject obj)
+    {
+        flags.Remove(obj);
+    }
 
 }

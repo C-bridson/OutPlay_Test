@@ -9,19 +9,30 @@ public class playerHandler : MonoBehaviour
     private GameObject body;
 
 
-    private void OnCollisionEnter(Collision collision)
+    private void OnTriggerEnter(Collider other)
     {
-        if (collision.gameObject.CompareTag("Flag"))
+        if (other.gameObject.CompareTag("Flag"))
         {
+            this.GetComponent<Movement>().target_Reached++;
             Debug.Log("Collision with Flag");
             //deactive body
-            body.SetActive(false);
+            if (this.GetComponent<Movement>().target_Reached < this.GetComponent<Movement>().total_Targets)
+            {
+
+                other.transform.gameObject.SetActive(false);
+                this.GetComponent<Movement>().UpdateTarget();
+            }
+            else
+            {
+                body.SetActive(false);
+            }
+        
             //play sounds
             //play particals
 
         }
 
-        if (collision.gameObject.CompareTag("Obstacle"))
+        if (other.gameObject.CompareTag("Obstacle"))
         {
             Debug.Log("Collision with Obstacle");
             //deactive body
