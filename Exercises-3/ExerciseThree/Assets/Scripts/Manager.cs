@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEditor;
 using UnityEngine;
 
 public class Manager : MonoBehaviour
@@ -14,6 +15,8 @@ public class Manager : MonoBehaviour
     [SerializeField]
     private ParticleSystem particles;
 
+    [SerializeField]
+    private MenuSystem menu;
 
     [SerializeField]
     private List<GameObject> flags = new List<GameObject>();
@@ -82,6 +85,11 @@ public class Manager : MonoBehaviour
         {
             Debug.LogWarning("particles not assigned ");
         }
+        menu = FindAnyObjectByType<MenuSystem>();
+        if (menu == null) 
+        {
+            Debug.LogWarning("Could not find MenuSystem");
+        }
     }
 
 
@@ -131,6 +139,7 @@ public class Manager : MonoBehaviour
         {
             cameraController.SwapParent();
             GameEnd = true ;
+            menu.ShowEndScreen("Win");
             PlaySoundEffect("wamp wamp");
             particles.Play();
         }
@@ -146,6 +155,7 @@ public class Manager : MonoBehaviour
         {
             if (soundclip.name == clipName)
             {
+                menu.ShowEndScreen("Lose");
                 audioSource.clip = soundclip;
                 audioSource.Play();
             }
