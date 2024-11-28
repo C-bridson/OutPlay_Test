@@ -6,6 +6,13 @@ using UnityEngine;
 public class Manager : MonoBehaviour
 {
     [SerializeField]
+    private AudioSource audioSource;
+
+    [SerializeField]
+    private List<AudioClip> audioClip;
+
+
+    [SerializeField]
     private List<GameObject> flags = new List<GameObject>();
 
     // a count of the total flags from the start of the game
@@ -57,6 +64,8 @@ public class Manager : MonoBehaviour
         CurrentTargetFlag = flags.FirstOrDefault();
 
         cameraController = FindObjectOfType<CameraController>();
+
+        audioSource = FindObjectOfType<AudioSource>();
     }
 
 
@@ -75,6 +84,11 @@ public class Manager : MonoBehaviour
             CurrentTargetFlag = null; 
             cameraController.SwapParent(); 
             GameEnd = true; 
+            if(gameEnded)
+            {
+                PlaySoundEffect("Ta da");
+
+            }
         }
         else
         {
@@ -101,7 +115,30 @@ public class Manager : MonoBehaviour
         {
             cameraController.SwapParent();
             GameEnd = true ;
+            PlaySoundEffect("wamp wamp");
         }
     }
+
+    /// <summary>
+    /// when called, plays the sound effect based on the sound clips name
+    /// </summary>
+    /// <param name="clipName"></param>
+    private void PlaySoundEffect(string clipName)
+    {
+        foreach (var soundclip in audioClip)
+        {
+            if (soundclip.name == clipName)
+            {
+                audioSource.clip = soundclip;
+                audioSource.Play();
+            }
+            else
+            {
+                Debug.LogWarning("sound Clip not found");
+            }
+        }
+    }
+
+
 
     }

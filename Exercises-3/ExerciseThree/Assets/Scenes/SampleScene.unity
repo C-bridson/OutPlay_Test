@@ -526,6 +526,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5e4208f76eb510e4487ca7b7cc9177aa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  audioSource: {fileID: 0}
+  audioClip:
+  - {fileID: 8300000, guid: 1db32a015e23c9141be3c5ccbd1c8d05, type: 3}
+  - {fileID: 8300000, guid: 47ed0172d1a64174887f25f3f10585ae, type: 3}
   flags:
   - {fileID: 797272966}
   - {fileID: 1349359109}
@@ -712,6 +716,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1523627068623244143, guid: 15d3401f79ce178419fd8e3f18de4d51, type: 3}
+      propertyPath: m_Volume
+      value: 0.7
+      objectReference: {fileID: 0}
+    - target: {fileID: 1523627068623244143, guid: 15d3401f79ce178419fd8e3f18de4d51, type: 3}
+      propertyPath: m_audioClip
+      value: 
+      objectReference: {fileID: 8300000, guid: 47ed0172d1a64174887f25f3f10585ae, type: 3}
     - target: {fileID: 5541680388693122689, guid: 15d3401f79ce178419fd8e3f18de4d51, type: 3}
       propertyPath: m_Name
       value: Player
