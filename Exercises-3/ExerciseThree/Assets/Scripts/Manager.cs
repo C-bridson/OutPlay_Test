@@ -7,9 +7,12 @@ public class Manager : MonoBehaviour
 {
     [SerializeField]
     private AudioSource audioSource;
-
+    //the list of sound clips to play
     [SerializeField]
     private List<AudioClip> audioClip;
+
+    [SerializeField]
+    private ParticleSystem particles;
 
 
     [SerializeField]
@@ -64,8 +67,21 @@ public class Manager : MonoBehaviour
         CurrentTargetFlag = flags.FirstOrDefault();
 
         cameraController = FindObjectOfType<CameraController>();
+        if (cameraController == null) 
+        {
+            Debug.LogWarning("Camera Controller not assigned ");
+        }
 
         audioSource = FindObjectOfType<AudioSource>();
+        if (audioSource == null)
+        {
+            Debug.LogWarning("audio Source not assigned ");
+        }
+        particles = FindObjectOfType<ParticleSystem>();
+        if (particles == null)
+        {
+            Debug.LogWarning("particles not assigned ");
+        }
     }
 
 
@@ -87,7 +103,7 @@ public class Manager : MonoBehaviour
             if(gameEnded)
             {
                 PlaySoundEffect("Ta da");
-
+                particles.Play();
             }
         }
         else
@@ -116,6 +132,7 @@ public class Manager : MonoBehaviour
             cameraController.SwapParent();
             GameEnd = true ;
             PlaySoundEffect("wamp wamp");
+            particles.Play();
         }
     }
 
