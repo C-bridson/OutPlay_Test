@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.PlayerLoop;
@@ -8,17 +9,11 @@ using static UnityEngine.GraphicsBuffer;
 public class CameraController : MonoBehaviour
 {
 
-    private GameObject player;
-
-    private GameObject mapCenter;
+    [SerializeField]
+    private Camera playerCamera;
 
     [SerializeField]
-    private float rotationSpeed = 50f;
-
-    [SerializeField]
-    private float smoothing = 5f;
-
-    private Quaternion desiredRotation;
+    private Camera worldCamera;
 
     private Manager manager;
 
@@ -27,50 +22,32 @@ public class CameraController : MonoBehaviour
     /// </summary>
     private void Awake()
     {
-        player = this.transform.parent.gameObject;
-        if (player == null)
-        {
-            Debug.LogWarning("Player object unassigned");
-        }
-
         manager = FindObjectOfType<Manager>();
 
         if (manager == null)
         {
             Debug.LogWarning("Manager not found.");
         }
-
-        mapCenter = manager.gameObject;
     }
 
-    // changes the camera parent object to the center of the map
-    public void SwapParent()
-    {
-        this.gameObject.transform.parent = mapCenter.transform;
-    }
     /// <summary>
-    /// Pivots the camera round the center of the map after the game ends regardless of outcome
+    /// Change which camera is being displayed 
+    /// Player camera, attached to the player it followes where ever the player gose
+    /// world camera, show a over view of the whole map on win/lose.
     /// </summary>
-    public void PivotMapCenter()
+    public void SwapCamera()
     {
-        transform.RotateAround(mapCenter.transform.position, Vector3.up, rotationSpeed * Time.deltaTime);
-
-        desiredRotation = Quaternion.LookRotation(mapCenter.transform.position - transform.position);
-
-        transform.rotation = Quaternion.Slerp(transform.rotation, desiredRotation, smoothing * Time.deltaTime);
-    }
-
-
-    private void FixedUpdate()
-    {
-        if (manager.GameEnd == true && manager.TargetsReached >= manager.TotalTargets)
+        if (manager.GameEnd == true)
         {
-            PivotMapCenter();
+            playerCamera.enabled = false;
+            worldCamera.enabled = true;
+            
         }
-        else if (manager.GameEnd == true && manager.TargetsReached < manager.TotalTargets)
+        else
         {
-            PivotMapCenter();
+            worldCamera.enabled = false;
+            playerCamera.enabled = true;
+   
         }
     }
-
 }

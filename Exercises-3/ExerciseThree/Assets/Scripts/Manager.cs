@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using TMPro;
+using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
 
@@ -17,6 +19,11 @@ public class Manager : MonoBehaviour
 
     [SerializeField]
     private MenuSystem menu;
+
+    [SerializeField]
+    private ObstacleSpawner obstacleSpawner;
+
+    private CollisionHandler collisionHandler;
 
     [SerializeField]
     private List<GameObject> flags = new List<GameObject>();
@@ -44,7 +51,7 @@ public class Manager : MonoBehaviour
         set { currentTarget = value; }
     }
     // a stop measure to prevent the player from continuing to move after ending the game
-    private bool canMove = true;
+    private bool canMove = false;
     public bool CanMove
     {
         get { return canMove; }
@@ -55,6 +62,7 @@ public class Manager : MonoBehaviour
     private CameraController cameraController;
 
     // the state of the game, true for the end of the game, false active gameplay.
+    [SerializeField]
     private bool gameEnded = false;
     public bool GameEnd
     {
@@ -67,79 +75,89 @@ public class Manager : MonoBehaviour
     {
         TotalTargets = flags.Count;
 
-        CurrentTargetFlag = flags.FirstOrDefault();
+        CurrentTargetFlag = flags[targetsReached];
 
+        InitializeComps();
+
+    }
+
+    // gather the requirements to insure the exist
+    void InitializeComps()
+    {
         cameraController = FindObjectOfType<CameraController>();
-        if (cameraController == null) 
-        {
-            Debug.LogWarning("Camera Controller not assigned ");
-        }
+        CheckComponent(cameraController, "Camera Controller");
 
         audioSource = FindObjectOfType<AudioSource>();
-        if (audioSource == null)
-        {
-            Debug.LogWarning("audio Source not assigned ");
-        }
+        CheckComponent(audioSource, "Audio Source");
+
         particles = FindObjectOfType<ParticleSystem>();
-        if (particles == null)
-        {
-            Debug.LogWarning("particles not assigned ");
-        }
+        CheckComponent(particles, "Particle System");
+
         menu = FindAnyObjectByType<MenuSystem>();
-        if (menu == null) 
+        CheckComponent(menu, "Menu System");
+
+        collisionHandler = FindAnyObjectByType<CollisionHandler>();
+        CheckComponent(collisionHandler, "Collision Handler");
+
+        obstacleSpawner = FindAnyObjectByType<ObstacleSpawner>();
+        CheckComponent(obstacleSpawner, "Obstacle Spawner");
+    }
+
+    //checks if the component is not null, reports if so.
+    void CheckComponent(object comp, string compName)
+    {
+        if (comp == null)
         {
-            Debug.LogWarning("Could not find MenuSystem");
+            Debug.LogWarning($"{compName} is not a assigned");
         }
     }
 
-
     /// <summary>
-    /// taking the object that was collided with it removes the object from the list
-    /// checks if that was the last object then ends the game
+    /// checks if that was the last target then ends the game
     /// else it sets the next target
     /// </summary>
-    /// <param name="obj"></param>
-    public void RemoveFlag(GameObject obj)
-    {
-        flags.Remove(obj); 
+    public void NextFlag()
+    { 
 
-        if (flags.Count == 0) 
+        if (targetsReached == totalTargets) 
         {
             CurrentTargetFlag = null; 
-            cameraController.SwapParent(); 
-            GameEnd = true; 
-            if(gameEnded)
+            GameEnd = true;
+            cameraController.SwapCamera();
+            if (gameEnded)
             {
+                menu.ShowEndScreen("Win");
                 PlaySoundEffect("Ta da");
                 particles.Play();
             }
         }
         else
         {
-          
-            CurrentTargetFlag = flags.FirstOrDefault();
+            if(targetsReached < flags.Count)
+                CurrentTargetFlag = flags[targetsReached];
         }
     }
 
     /// <summary>
     /// update the based on which object was hit.
-    /// flags remove the what was collided from the list
+    /// flags hit change the target for the player.
     /// 
     /// obstacles end the game
     /// </summary>
     /// <param name="collision"></param>
     /// <param name="tag"></param>
-    public void ObjectCollision(GameObject collision, string tag)
+    public void ObjectCollision(string tag)
     {
         if (tag == "Flag")
         {
-            RemoveFlag(collision);
+
+            NextFlag();
         }
         else if (tag == "Obstacle")
         {
-            cameraController.SwapParent();
+            cameraController.SwapCamera();
             GameEnd = true ;
-            menu.ShowEndScreen("Win");
+            menu.ShowEndScreen("Lose");
             PlaySoundEffect("wamp wamp");
             particles.Play();
         }
@@ -151,21 +169,42 @@ public class Manager : MonoBehaviour
     /// <param name="clipName"></param>
     private void PlaySoundEffect(string clipName)
     {
+
         foreach (var soundclip in audioClip)
         {
             if (soundclip.name == clipName)
-            {
-                menu.ShowEndScreen("Lose");
+            { 
                 audioSource.clip = soundclip;
                 audioSource.Play();
-            }
-            else
-            {
-                Debug.LogWarning("sound Clip not found");
+                break;
             }
         }
     }
 
+    /// <summary>
+    /// Reset game world state.
+    /// </summary>
+
+    public void NewGame()
+    {
+        GameEnd = false;
+        obstacleSpawner.ResetObstaclePool();
+        particles.Stop();
+        particles.Clear();
+        canMove = true;
+        collisionHandler.ResetPlayerBody();
+
+        targetsReached = 0;
+        currentTarget = flags[targetsReached];
+
+        foreach (var item in flags)
+        {
+            item.SetActive(true);
+        }
+
+        cameraController.SwapCamera();
+
+    }
 
 
     }

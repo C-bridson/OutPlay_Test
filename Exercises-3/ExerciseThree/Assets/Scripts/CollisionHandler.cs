@@ -48,36 +48,37 @@ public class CollisionHandler : MonoBehaviour
         {
         
             manager.TargetsReached++;
-
-     
+            
             if (manager.TargetsReached < manager.TotalTargets)
             {
                 other.transform.gameObject.SetActive(false);
-                manager.ObjectCollision(other.gameObject, "Flag");
+                manager.ObjectCollision("Flag");
             }
             else
-            {
-     
+            {    
                 body.SetActive(false);
                 other.transform.gameObject.SetActive(false);
-                manager.ObjectCollision(other.gameObject, "Flag");
+                manager.ObjectCollision("Flag");
             }
-
-
-            // play sounds
-            // play particles
         }
 
         if (other.gameObject.CompareTag("Obstacle"))
-        {
-            // Stop player movement
+        {      
             manager.CanMove = false;
-            // Deactivate the body
             body.SetActive(false);
-            manager.ObjectCollision(null, "Obstacle");
-            // play sounds
-            // play particles
+            manager.ObjectCollision("Obstacle");
+
         }
+    }
+
+
+    /// <summary>
+    /// resets the players position back to origin + 1 to prevent fall through.
+    /// </summary>
+    public void ResetPlayerBody()
+    {
+        body.SetActive(true);
+        body.transform.parent.transform.position = new Vector3 (0f, 1f, 0f);
     }
 
 }
