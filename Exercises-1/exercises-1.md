@@ -1,9 +1,15 @@
 
-goal
-predict the position of a ball if and when it arrives at a set height.
+Goal : predict the position of a ball if and when it arrives at a set height.
 
-using quadratic equations to work out the time it would take to reach the height
-the horizontal position can then be determined.
+Solution development :
+Problem described matches a traditional trajectory solution plus bouncing off the walls
+Researched how to calculate trajectories 
+ -- selected a quadratic formula to solve for time. The equation a*t^2 + b*t + c = 0 where a = 0.5 * G, b = -v.Y, and c = deltaY (difference in height).  
+ -- Use 1D kinematics to calculate X Position
+ -- Handle wall bounces through remainder from width division
+Check that the Target height was reached and return True
+
+
 
 ```cs
 bool TryCalculateXPositionAtHeight(
@@ -18,13 +24,22 @@ bool TryCalculateXPositionAtHeight(
     float acceleration = 0.5f * gravity;
     float heightDifference = position.y - targetHeight;
 
-    //solve for time with quadratic formula
+    //solve for time using a quadratic formula
 
     float time = (-velocity.y + (Math.Sqrt(Math.Pow(velocity.y, 2) - 4 * acceleration * heightDifference))) / (2 * acceleration);
 
-    //1D kinematics equations
+    //determine if ball reached target height
+    // If time is negative, the ball does not reach the target height 
+    if (time < 0) 
+    { 
+        return false;
+    }
+
+    //1D kinematics equations to solve for x position after time
 
     float x = position.x + time * velocity.x;
+
+    //simulate bouncing off the walls
 
     x = x % (2 * width);
 
@@ -34,6 +49,8 @@ bool TryCalculateXPositionAtHeight(
     }
 
     xPosition = x;
-        return true;
+
+    // Return True as target height was reached
+    return true;
 }
 ```cs
