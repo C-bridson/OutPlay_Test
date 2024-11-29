@@ -161,12 +161,54 @@ int CalculateMatchScore(int x, int y, MoveDirection direction)
    return score;
 }
 
+
+// iterates through rows and columns to find any matching types
+// counts up the score the move should make.
 int CheckMatches(int x, int y)
 {
-    //calculate how much the player gets for the swap
+     //calculate how much the player gets for the swap
     //based on row, column matches.
+   JewelKind kind = GetJewel(x,y);
+   int score = 0;
 
+   //already have 1st jewel // move across columns
+   // Search in 4 directions till no jewel match or 
+
+   int count = 1
+   for (int i = x - 1; i >= 0 && GetJewel(i,y) == kind; i--)
+   {
+      count++;
+   }
+   
+   for(int i = x + 1; i < GetWidth() && GetJewel(i,y) == kind; i++)
+   {
+      count++
+   }
+
+   if (count >= 3)
+   {
+      score += count;
+   }
+
+   //vertical
+   count = 1;
+   for (int i = y - 1; i >= 0 && GetJewel(x,i) == kind; i--)
+   {
+      count++;
+   }
+   for(int i = y + 1; i < GetHeight() && GetJewel(x,i) == kind; i++)
+   {
+      count++;
+   }
+   if (count >= 3)
+   {
+      score += count;
+   }
+
+   return score;
 }
+
+
 
 
 }
