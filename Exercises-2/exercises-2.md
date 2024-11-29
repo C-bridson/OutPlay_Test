@@ -79,22 +79,18 @@ public class Board
             {
                 foreach(MoveDirection direction in Enum.GetValues(typeof(MoveDirection)))
                 {
-
                     if(IsSwapValid(x,y,direction))
                     {             
+                        int score = CalculateMatchScore(x,y,direction);
 
-                    // calculate
-                    int score = CalculateMatchScore(x,y,direction);
-
-                    if(score > bestScore)
-                    {
-                        bestScore = score;
-                        bestMove = new Move(x,y,direction);
+                        if(score > bestScore)
+                        {
+                            bestScore = score;
+                            bestMove = new Move(x,y,direction);
+                        }
                     }
-
                 }
             }
-    
         }
     }
 
@@ -125,96 +121,103 @@ public class Board
     }
 
 
-///
-//swaps the position that was valid, checks for matching jewels.
-//resets the positions and returns score.
-///
+    ///
+    //swaps the position that was valid, checks for matching jewels.
+    //resets the positions and returns score.
+    ///
 
-int CalculateMatchScore(int x, int y, MoveDirection direction)
-{
-   int swappedX = x;
-   int swappedY = y;
-   int score =0;
+    int CalculateMatchScore(int x, int y, MoveDirection direction)
+    {
+    int swappedX = x;
+    int swappedY = y;
+    int score =0;
 
-  switch(direction)
-   {
-      case MoveDirection.Up: swappedY -= 1;
-      break;
-      case MoveDirection.Down: swappedY += 1;
-      break;
-      case MoveDirection.Left: swappedX -=1; 
-      break;
-      case MoveDirection.Right: swappedX +=1;
-   }
+    switch(direction)
+    {
+        case MoveDirection.Up: swappedY -= 1;
+        break;
+        case MoveDirection.Down: swappedY += 1;
+        break;
+        case MoveDirection.Left: swappedX -=1; 
+        break;
+        case MoveDirection.Right: swappedX +=1;
+    }
 
-   JewelKind currentSelected = GetJewel(x,y);
-   JewelKind targetJewel = GetJewel(swappedX,swappedY);
+    JewelKind currentSelected = GetJewel(x,y);
+    JewelKind targetJewel = GetJewel(swappedX,swappedY);
 
-   // jewels have been swapped around
-   SetJewel(x,y,targetJewel);
-   SetJewel(swappedX,swappedY,currentSelected);
+    // jewels have been swapped around
+    SetJewel(x,y,targetJewel);
+    SetJewel(swappedX,swappedY,currentSelected);
 
     //check for any matches in all directions and calculate Row and Column score
-   score += CheckMatches(swappedX,swappedY);
-   score += CheckMatches(x,y);
+    score += CheckMatches(swappedX,swappedY);
+    score += CheckMatches(x,y);
 
-   // return jewels that have been swapped back.
-   SetJewel(x,y,currentSelected);
-   SetJewel(swappedX,swappedY,targetJewel);
+    // return jewels that have been swapped back.
+    SetJewel(x,y,currentSelected);
+    SetJewel(swappedX,swappedY,targetJewel);
 
-   return score;
-}
+    return score;
+    }
 
 
-// iterates through rows and columns to find any matching types
-// counts up the score the move should make.
-int CheckMatches(int x, int y)
-{
-     //calculate how much the player gets for the swap
+    // iterates through rows and columns to find any matching types
+    // counts up the score the move should make.
+    int CheckMatches(int x, int y)
+    {
+    //calculate how much the player gets for the swap
     //based on row, column matches.
-   JewelKind kind = GetJewel(x,y);
-   int score = 0;
+    JewelKind kind = GetJewel(x,y);
+    int score = 0;
 
-   //already have 1st jewel // move across columns
-   // Search in 4 directions till no jewel match or 
+    //already have 1st jewel // move across columns
+    // Search in 4 directions till no jewel match or 
 
-//** Need to handle when you reach the edge of the board **
-   int count = 1
-   for (int i = x - 1; i >= 0 && GetJewel(i,y) == kind; i--)
-   {
-      count++;
-   }
+    int count = 1
+    for (int i = x - 1; i >= 0 && GetJewel(i,y) == kind; i--)
+    {
+        if(GetJewel(i,y) == kind && GetJewel(i,y) != JewelKind.Empty)
+        {
+            count++;
+        }
+    }
    
-   for(int i = x + 1; i < GetWidth() && GetJewel(i,y) == kind; i++)
-   {
-      count++
-   }
+    for(int i = x + 1; i < GetWidth() && GetJewel(i,y) == kind; i++)
+    { 
+        if(GetJewel(i,y) == kind && GetJewel(i,y) != JewelKind.Empty);
+        {
+            count++
+        }
+    }
 
-   if (count >= 3)
-   {
+    if (count >= 3)
+    {
+        score += count;
+    }
+
+    //vertical
+    count = 1;
+    for (int i = y - 1; i >= 0 && GetJewel(x,i) == kind; i--)
+    {
+        if(GetJewel(x,i) == kind && GetJewel(x,i) != JewelKind.Empty)
+        {
+            count++;
+        }
+    }
+    for(int i = y + 1; i < GetHeight() && GetJewel(x,i) == kind; i++)
+    {
+        if(GetJewel(x,i) == kind && GetJewel(x,i) != JewelKind.Empty)
+        {
+            count++;
+        }
+    }
+    if (count >= 3)
+    {
       score += count;
-   }
+    }
 
-   //vertical
-   count = 1;
-   for (int i = y - 1; i >= 0 && GetJewel(x,i) == kind; i--)
-   {
-      count++;
-   }
-   for(int i = y + 1; i < GetHeight() && GetJewel(x,i) == kind; i++)
-   {
-      count++;
-   }
-   if (count >= 3)
-   {
-      score += count;
-   }
-
-   return score;
-}
-
-
-
-
+    return score;
+    }
 }
 ```cs
