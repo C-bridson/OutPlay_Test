@@ -17,6 +17,7 @@ Given the code below implement the CalculateBestMoveForBoard function
 
 Roadmap
     loop through width and hight for board
+    loop through directions to move
     check validation of possaible move
     simulate swap of jewels 
     calculate score based on coloums and rows
@@ -46,21 +47,77 @@ public class Board
         Left,
         Right
     }
-    struct Move
-    {
-        public int x;
-        public int y;
-        public MoveDirection direction;
-    }
 
     int GetWidth();
     int GetHeight();
     JewelKind GetJewel(int x, int y);
     void SetJewel(int x, int y, JewelKind kind);
+
+
+    struct Move
+    {
+        public int x;
+        public int y;
+        public MoveDirection direction;
+        public Move(int x,int y, MoveDirection dir)
+        {
+            this.x = x;
+            this.y = y;
+            this.direction = dir;
+        }
+    }
+
+ 
     
     Move CalculateBestMoveForBoard()
     {
-    // Implement this function
+        //move down rows
+        for(y = 0; y < GetHeight(); y++)
+        {
+            //moving across columns
+            for(x = 0; x < GetWidth(); x++)
+            {
+                foreach(MoveDirection direction in Enum.GetValues(typeof(MoveDirection)))
+                {
+
+                    if(IsSwapValid(x,y,direction))
+                    {             
+
+                            // calculate
+
+                        //score
+                    }
+                }
+            }
+    
+        }
     }
+
+    // Checking if there is a valid tile to swap too.
+    // Returns True if valid
+    ///
+    bool IsSwapValid(int x, int y, MoveDirection direction)
+    {
+    int swappedX = x;
+    int swappedY = y;
+    switch(direction)
+    {
+        case MoveDirection.Up: swappedY -= 1;
+        break;
+        case MoveDirection.Down: swappedY += 1;
+        break;
+        case MoveDirection.Left: swappedX -=1; 
+        break;
+        case MoveDirection.Right: swappedX +=1;
+    }
+
+    if(swappedX <0 || swappedX >= GetWidth() || swappedY < 0 || swappedY >= GetHeight() )
+    {
+        // Out of Bounds;
+        return false;
+    }
+    return true;
+    }
+
 }
 ```cs
