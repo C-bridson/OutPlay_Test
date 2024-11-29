@@ -769,7 +769,7 @@ MonoBehaviour:
   panel: {fileID: 1717216018}
   endGameMenu: {fileID: 19148881}
   startGameMenu: {fileID: 1857084898}
-  text: {fileID: 1771286350}
+  endGameText: {fileID: 1771286350}
   manager: {fileID: 0}
 --- !u!114 &847327452
 MonoBehaviour:
@@ -1691,7 +1691,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 0.392}
+  m_Color: {r: 1, g: 1, b: 1, a: 0.078431375}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1

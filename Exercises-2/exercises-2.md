@@ -84,6 +84,7 @@ public class Board
                     {             
 
                             // calculate
+                            int score = CalculateMatchScore(x,y,direction);
 
                         //score
                     }
@@ -118,6 +119,55 @@ public class Board
     }
     return true;
     }
+
+
+///
+//swaps the position that was valid, checks for matching jewels.
+//resets the positions and returns score.
+///
+
+int CalculateMatchScore(int x, int y, MoveDirection direction)
+{
+   int swappedX = x;
+   int swappedY = y;
+   int score =0;
+
+  switch(direction)
+   {
+      case MoveDirection.Up: swappedY -= 1;
+      break;
+      case MoveDirection.Down: swappedY += 1;
+      break;
+      case MoveDirection.Left: swappedX -=1; 
+      break;
+      case MoveDirection.Right: swappedX +=1;
+   }
+
+   JewelKind currentSelected = GetJewel(x,y);
+   JewelKind targetJewel = GetJewel(swappedX,swappedY);
+
+   // jewels have been swapped around
+   SetJewel(x,y,targetJewel);
+   SetJewel(swappedX,swappedY,currentSelected);
+
+    //check for any matches in all directions and calculate Row and Column score
+   score += CheckMatches(swappedX,swappedY);
+   score += CheckMatches(x,y);
+
+   // return jewels that have been swapped back.
+   SetJewel(x,y,currentSelected);
+   SetJewel(swappedX,swappedY,targetJewel);
+
+   return score;
+}
+
+int CheckMatches(int x, int y)
+{
+    //calculate how much the player gets for the swap
+    //based on row, column matches.
+
+}
+
 
 }
 ```cs
