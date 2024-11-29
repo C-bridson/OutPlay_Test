@@ -83,11 +83,15 @@ public class Board
                     if(IsSwapValid(x,y,direction))
                     {             
 
-                            // calculate
-                            int score = CalculateMatchScore(x,y,direction);
+                    // calculate
+                    int score = CalculateMatchScore(x,y,direction);
 
-                        //score
+                    if(score > bestScore)
+                    {
+                        bestScore = score;
+                        bestMove = new Move(x,y,direction);
                     }
+
                 }
             }
     
@@ -174,6 +178,7 @@ int CheckMatches(int x, int y)
    //already have 1st jewel // move across columns
    // Search in 4 directions till no jewel match or 
 
+//** Need to handle when you reach the edge of the board **
    int count = 1
    for (int i = x - 1; i >= 0 && GetJewel(i,y) == kind; i--)
    {
